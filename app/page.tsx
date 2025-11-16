@@ -77,10 +77,8 @@ export default function Home() {
               maxWidth: "100%",
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
-
             <div className="relative z-10 h-full flex flex-col justify-between py-1">
-              <div>
+              <div className='h-1/2'>
                 <p className="text-white/70 text-xs mb-1">
                   {dashboardData?.monthlyBudgetApplied === "custom" ? "Custom Budget" : "Total Available"}
                 </p>
@@ -93,7 +91,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-end justify-between pr-1">
+              <div className="flex h-1/2 items-end justify-between pr-1">
                 <div className="flex-1 min-w-0">
                   <div className="flex gap-3 text-white/60 text-[10px] font-mono mb-2">
                     <span>2654</span>
@@ -110,6 +108,7 @@ export default function Home() {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-400 shadow-lg" />
                 </div>
               </div>
+
             </div>
 
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
