@@ -77,8 +77,8 @@ export default function Home() {
               maxWidth: "100%",
             }}
           >
-            <div className="relative z-10 h-full flex flex-col justify-between py-1">
-              <div className='h-1/2'>
+            <div className="relative  z-10 h-full flex flex-col py-1 ">
+              <div className='h-1/2 max-h-1/2'>
                 <p className="text-white/70 text-xs mb-1">
                   {dashboardData?.monthlyBudgetApplied === "custom" ? "Custom Budget" : "Total Available"}
                 </p>
@@ -91,8 +91,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex h-1/2 items-end justify-between pr-1">
-                <div className="flex-1 min-w-0">
+              <div className="flex h-1/2 max-h-1/2 items-end justify-between pr-1 ">
+                <div className="flex-1 min-w-0 min-h-1/2">
                   <div className="flex gap-3 text-white/60 text-[10px] font-mono mb-2">
                     <span>2654</span>
                     <span>7545</span>
@@ -103,7 +103,7 @@ export default function Home() {
                     {user?.name?.toUpperCase() || "AFTAB"}
                   </p>
                 </div>
-                <div className="flex -space-x-2 flex-shrink-0">
+                <div className="flex -space-x-2 flex-shrink-0 min-h-1/2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 shadow-lg" />
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-400 shadow-lg" />
                 </div>
@@ -111,7 +111,7 @@ export default function Home() {
 
             </div>
 
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+            {/* <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl" /> */}
           </div>
 
           {dashboardData && (
