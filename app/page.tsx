@@ -69,16 +69,17 @@ export default function Home() {
           </div>
 
           <div
-            className={`relative rounded-3xl bg-gradient-to-br ${colors.cardGradient} p-4 mb-4 overflow-hidden shadow-2xl`}
+            className={`relative rounded-3xl bg-gradient-to-br ${colors.cardGradient} p-5 mb-4 overflow-hidden shadow-2xl`}
             style={{
               boxShadow: "0 20px 60px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)",
               transform: "perspective(1000px) rotateX(2deg)",
               aspectRatio: "1.586/1",
+              maxWidth: "100%",
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 h-full flex flex-col justify-between">
+            <div className="relative z-10 h-full flex flex-col justify-between py-1">
               <div>
                 <p className="text-white/70 text-xs mb-1">
                   {dashboardData?.monthlyBudgetApplied === "custom" ? "Custom Budget" : "Total Available"}
@@ -92,17 +93,19 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-end justify-between">
-                <div>
+              <div className="flex items-end justify-between pr-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex gap-3 text-white/60 text-[10px] font-mono mb-2">
                     <span>2654</span>
                     <span>7545</span>
                     <span>3807</span>
                     <span>1965</span>
                   </div>
-                  <p className="text-white text-xs font-medium tracking-wide">{user?.name?.toUpperCase() || "AFTAB"}</p>
+                  <p className="text-white text-sm font-medium tracking-wide truncate pr-2">
+                    {user?.name?.toUpperCase() || "AFTAB"}
+                  </p>
                 </div>
-                <div className="flex -space-x-2">
+                <div className="flex -space-x-2 flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 shadow-lg" />
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-400 shadow-lg" />
                 </div>

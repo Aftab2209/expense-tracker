@@ -142,4 +142,20 @@
   small {
     font-size: 0.875rem;
   }
+
+  /* Prevent zoom on input focus on mobile devices */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Prevent automatic zoom on iOS Safari */
+  @supports (-webkit-touch-callout: none) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
 }

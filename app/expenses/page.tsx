@@ -91,7 +91,7 @@ export default function ExpensesPage() {
   }
 
   const getCategoryIcon = (type: string) => {
-    return type === "income" ? "💰" : "💸"
+    return type === "income" ? "��" : "💸"
   }
 
   const handleTransactionSuccess = () => {

@@ -141,7 +141,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center transition-opacity duration-300"
+      className="fixed inset-0 bg-black/50 z-100 flex items-end md:items-center justify-center transition-opacity duration-300"
       onClick={onClose}
     >
       <form
@@ -202,6 +202,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                   step="0.01"
                   required
                   className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all"
+                  style={{ fontSize: '16px' }}
                   onFocus={(e) => (e.target.style.borderColor = colors.primary)}
                   onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
                 />
@@ -221,8 +222,9 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                       value={categoryId}
                       onChange={(e) => setCategoryId(e.target.value)}
                       required
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-sm appearance-none bg-white cursor-pointer transition-all"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent appearance-none bg-white cursor-pointer transition-all"
                       style={{
+                        fontSize: '16px',
                         backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                         backgroundPosition: "right 0.75rem center",
                         backgroundRepeat: "no-repeat",
@@ -260,6 +262,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                         placeholder="📁 (optional)"
                         maxLength={2}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                        style={{ fontSize: '16px' }}
                       />
                     </div>
                     <div>
@@ -270,6 +273,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                         onChange={(e) => setNewCategoryName(e.target.value)}
                         placeholder="e.g., Groceries, Entertainment"
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                        style={{ fontSize: '16px' }}
                       />
                     </div>
                     <div className="flex gap-2">
@@ -308,6 +312,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                 onChange={(e) => setNote(e.target.value)}
                 placeholder={type === "expense" ? "Dinner with friends" : "Freelance work"}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all"
+                style={{ fontSize: '16px' }}
                 onFocus={(e) => (e.target.style.borderColor = colors.primary)}
                 onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
               />
@@ -322,6 +327,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                 onChange={(e) => setDate(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all"
+                style={{ fontSize: '16px' }}
                 onFocus={(e) => (e.target.style.borderColor = colors.primary)}
                 onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
               />
@@ -382,6 +388,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSuccess }: AddT
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="dinner, friends, celebration"
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all"
+                style={{ fontSize: '16px' }}
                 onFocus={(e) => (e.target.style.borderColor = colors.primary)}
                 onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
               />
