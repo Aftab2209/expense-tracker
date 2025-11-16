@@ -27,6 +27,7 @@ export const metadata: Metadata = {
         url: "/icons/ic_launcher.png",
         media: "(prefers-color-scheme: dark)",
       }
+      
     ],
     apple: "/icons/ic_launcher.png",
   },
