@@ -20,15 +20,15 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icons/ic_launcher.jpg",
+        url: "/icons/ic_launcher.png",
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: "/icons/ic_launcher.jpg",
+        url: "/icons/ic_launcher.png",
         media: "(prefers-color-scheme: dark)",
       }
     ],
-    apple: "/icons/ic_launcher.jpg",
+    apple: "/icons/ic_launcher.png",
   },
 }
 
