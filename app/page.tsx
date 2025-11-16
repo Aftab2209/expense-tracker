@@ -77,7 +77,7 @@ export default function Home() {
               maxWidth: "100%",
             }}
           >
-            <div className="relative  z-10 h-full flex flex-col py-1 ">
+            <div className="relative z-10 h-full flex flex-col py-1 gap-6 ">
               <div className='h-1/2 max-h-1/2'>
                 <p className="text-white/70 text-xs mb-1">
                   {dashboardData?.monthlyBudgetApplied === "custom" ? "Custom Budget" : "Total Available"}
@@ -91,7 +91,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex h-1/2 max-h-1/2 items-end justify-between pr-1 ">
+              <div className="flex h-1/2 max-h-1/2 justify-between pr-1 ">
                 <div className="flex-1 min-w-0 min-h-1/2">
                   <div className="flex gap-3 text-white/60 text-[10px] font-mono mb-2">
                     <span>2654</span>
