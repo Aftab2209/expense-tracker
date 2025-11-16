@@ -193,6 +193,23 @@ export const transactionAPI = {
       }>
     }>(response)
   },
+
+  update: async (id: string, transaction: Partial<ExpenseTransaction | IncomeTransaction>) => {
+    const response = await fetch(`${API_BASE_URL}/api/transaction/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(transaction),
+    })
+    return handleResponse<{ success: boolean }>(response)
+  },
+
+  delete: async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/transaction/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    })
+    return handleResponse<{ success: boolean }>(response)
+  },
 }
 
 // Reports API

@@ -9,6 +9,13 @@ function parseCSV(str) {
   return str.split(",").map(s => s.trim()).filter(Boolean);
 }
 
+function safeDate(val) {
+  if (!val) return undefined;
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? undefined : d;
+}
+
+
 export async function POST(req) {
   try {
     const auth = req.headers.get("authorization");
@@ -133,6 +140,15 @@ export async function GET(req) {
 }
 
 
+async function tryUpdate(collectionName, db, filter, updateData) {
+  const res = await db.collection(collectionName).updateOne(filter, { $set: updateData });
+  return res.matchedCount > 0;
+}
+
+async function tryDelete(collectionName, db, filter) {
+  const res = await db.collection(collectionName).deleteOne(filter);
+  return res.deletedCount > 0;
+}
 
 export async function PUT(req) {
   try {
@@ -141,19 +157,16 @@ export async function PUT(req) {
     const decoded = verifyToken(token);
     if (!decoded) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    // extract id from URL — last segment
     const url = new URL(req.url);
-    const parts = url.pathname.split("/").filter(Boolean); // ["api","transaction",":id"]
+    const parts = url.pathname.split("/").filter(Boolean);
     const id = parts[parts.length - 1];
-
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "invalid or missing id" }, { status: 400 });
     }
 
     const body = await req.json();
-    // allow client to optionally pass type, otherwise try to infer from body or error
-    const type = body.type;
-    if (!type || (type !== "expense" && type !== "income")) {
+    const providedType = body.type;
+    if (providedType && providedType !== "expense" && providedType !== "income") {
       return NextResponse.json({ error: "type must be 'income' or 'expense'" }, { status: 400 });
     }
 
@@ -162,11 +175,7 @@ export async function PUT(req) {
     const userId = new ObjectId(decoded.userId);
     const _id = new ObjectId(id);
 
-    const collection = type === "expense" ? "expenses" : "incomes";
-
-    const updateData = { updatedAt: new Date() };
-
-    // allowed fields to update
+    const baseUpdate = { updatedAt: new Date() };
     const fields = ["amount", "note", "date", "tags", "paymentMethod", "mood", "categoryId"];
     for (const f of fields) {
       if (body[f] !== undefined) {
@@ -174,31 +183,46 @@ export async function PUT(req) {
           if (!ObjectId.isValid(body[f])) {
             return NextResponse.json({ error: "invalid categoryId" }, { status: 400 });
           }
-          updateData[f] = new ObjectId(body[f]);
+          baseUpdate[f] = new ObjectId(body[f]);
         } else if (f === "date") {
           const d = safeDate(body[f]);
           if (!d) return NextResponse.json({ error: "invalid date" }, { status: 400 });
-          updateData[f] = d;
+          baseUpdate[f] = d;
         } else if (f === "amount") {
-          updateData[f] = Number(body[f]);
+          baseUpdate[f] = Number(body[f]);
         } else if (f === "tags") {
-          updateData[f] = Array.isArray(body[f]) ? body[f] : [];
+          baseUpdate[f] = Array.isArray(body[f]) ? body[f] : [];
         } else {
-          updateData[f] = body[f];
+          baseUpdate[f] = body[f];
         }
       }
     }
 
-    const result = await db.collection(collection).updateOne(
-      { _id, userId },
-      { $set: updateData }
-    );
-
-    if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "transaction not found" }, { status: 404 });
+    // If type provided, update only that collection
+    if (providedType) {
+      const collection = providedType === "expense" ? "expenses" : "incomes";
+      // if updating incomes, remove categoryId/paymentMethod/mood if present and not relevant
+      if (collection === "incomes" && baseUpdate.categoryId) delete baseUpdate.categoryId;
+      const matched = await tryUpdate(collection, db, { _id, userId }, baseUpdate);
+      if (!matched) return NextResponse.json({ error: "transaction not found" }, { status: 404 });
+      return NextResponse.json({ success: true, updated: true, type: providedType });
     }
 
-    return NextResponse.json({ success: true, updated: true });
+    // Auto-detect: try expenses first, then incomes
+    const triedExpense = { ...baseUpdate };
+    const expenseMatched = await tryUpdate("expenses", db, { _id, userId }, triedExpense);
+    if (expenseMatched) return NextResponse.json({ success: true, updated: true, type: "expense" });
+
+    // For incomes, remove categoryId/paymentMethod/mood which are expense-specific
+    const incomeUpdate = { ...baseUpdate };
+    delete incomeUpdate.categoryId;
+    delete incomeUpdate.paymentMethod;
+    delete incomeUpdate.mood;
+
+    const incomeMatched = await tryUpdate("incomes", db, { _id, userId }, incomeUpdate);
+    if (incomeMatched) return NextResponse.json({ success: true, updated: true, type: "income" });
+
+    return NextResponse.json({ error: "transaction not found" }, { status: 404 });
   } catch (err) {
     return NextResponse.json({ error: "failed to update transaction", details: err.message }, { status: 500 });
   }
@@ -211,18 +235,11 @@ export async function DELETE(req) {
     const decoded = verifyToken(token);
     if (!decoded) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    // extract id and optional type from query ?type=expense
     const url = new URL(req.url);
-    const parts = url.pathname.split("/").filter(Boolean); // ["api","transaction",":id"]
+    const parts = url.pathname.split("/").filter(Boolean);
     const id = parts[parts.length - 1];
-    const type = url.searchParams.get("type"); // optional but recommended
-
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json({ error: "invalid or missing id" }, { status: 400 });
-    }
-
-    if (!type || (type !== "expense" && type !== "income")) {
-      return NextResponse.json({ error: "type must be 'income' or 'expense' (query param)" }, { status: 400 });
     }
 
     const client = await clientPromise;
@@ -230,15 +247,19 @@ export async function DELETE(req) {
     const userId = new ObjectId(decoded.userId);
     const _id = new ObjectId(id);
 
-    const collection = type === "expense" ? "expenses" : "incomes";
-
-    const result = await db.collection(collection).deleteOne({ _id, userId });
-
-    if (result.deletedCount === 0) {
-      return NextResponse.json({ error: "transaction not found" }, { status: 404 });
+    // Try expenses first
+    const deletedInExpenses = await tryDelete("expenses", db, { _id, userId });
+    if (deletedInExpenses) {
+      return NextResponse.json({ success: true, deleted: true, type: "expense" });
     }
 
-    return NextResponse.json({ success: true, deleted: true });
+    // Then try incomes
+    const deletedInIncomes = await tryDelete("incomes", db, { _id, userId });
+    if (deletedInIncomes) {
+      return NextResponse.json({ success: true, deleted: true, type: "income" });
+    }
+
+    return NextResponse.json({ error: "transaction not found" }, { status: 404 });
   } catch (err) {
     return NextResponse.json({ error: "failed to delete transaction", details: err.message }, { status: 500 });
   }

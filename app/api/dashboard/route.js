@@ -28,7 +28,10 @@ export async function GET(req) {
     const budgetDoc = await db.collection("budgets").findOne({ userId, year, month });
 
     // appliedBase is either budget override or user's salary snapshot (or user's monthlySalary fallback)
-    const appliedBase = budgetDoc?.totalBudgetLimit ?? budgetDoc?.totalSalaryForMonth ?? user.monthlySalary;
+    // const appliedBase = budgetDoc?.totalBudgetLimit ?? budgetDoc?.totalSalaryForMonth ?? user.monthlySalary;
+
+    const appliedBase =  user.monthlySalary;
+
 
     // month range in UTC
     const start = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));

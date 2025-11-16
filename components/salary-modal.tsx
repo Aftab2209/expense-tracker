@@ -65,7 +65,7 @@ export default function SalaryModal({ isOpen, onClose, onSuccess }: SalaryModalP
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center">
+    <div className="fixed inset-0 bg-black/50 z-100 flex items-end md:items-center justify-center">
       <div className="bg-white rounded-t-3xl md:rounded-3xl w-full max-w-md">
         <div className="border-b border-gray-100 p-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Update Salary Info</h2>

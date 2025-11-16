@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTheme, themeColors } from "@/contexts/theme-context"
 import BottomNav from "@/components/bottom-nav"
 import AddTransactionModal from "@/components/add-transaction-modal"
+import EditTransactionModal from "@/components/edit-transaction-modal"
 import Loader from "@/components/loader"
 import { useRouter } from 'next/navigation'
 import { reportsAPI } from "@/lib/api"
@@ -27,6 +28,8 @@ export default function ExpensesPage() {
   const [dailyData, setDailyData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null)
 
   const daysOfWeek = ["Su", "M", "T", "W", "T", "F", "S"]
 
@@ -91,7 +94,7 @@ export default function ExpensesPage() {
   }
 
   const getCategoryIcon = (type: string) => {
-    return type === "income" ? "��" : "💸"
+    return type === "income" ? "💰" : "💸"
   }
 
   const handleTransactionSuccess = () => {
@@ -107,6 +110,11 @@ export default function ExpensesPage() {
       }
     }
     fetchDailyData()
+  }
+
+  const handleTransactionClick = (transaction: any) => {
+    setSelectedTransaction(transaction)
+    setShowEditModal(true)
   }
 
   if (loading && !dailyData) {
@@ -186,7 +194,11 @@ export default function ExpensesPage() {
               ) : selectedDayExpenses.length > 0 ? (
                 <div className="space-y-2.5">
                   {selectedDayExpenses.map((transaction: any) => (
-                    <div key={transaction._id} className="bg-white rounded-xl p-3 flex items-center justify-between">
+                    <button
+                      key={transaction._id}
+                      onClick={() => handleTransactionClick(transaction)}
+                      className="w-full bg-white rounded-xl p-3 flex items-center justify-between hover:shadow-md transition-all"
+                    >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-10 h-10 rounded-xl ${
@@ -195,7 +207,7 @@ export default function ExpensesPage() {
                         >
                           {getCategoryIcon(transaction.type)}
                         </div>
-                        <div>
+                        <div className="text-left">
                           <h3 className="font-medium text-gray-900 text-xs">
                             {transaction.note || (transaction.type === "income" ? "Income" : "Expense")}
                           </h3>
@@ -211,7 +223,7 @@ export default function ExpensesPage() {
                           {formatCurrency(transaction.amount)}
                         </p>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ) : (
@@ -229,6 +241,18 @@ export default function ExpensesPage() {
         onClose={() => setShowAddModal(false)}
         onSuccess={handleTransactionSuccess}
       />
+
+      {selectedTransaction && (
+        <EditTransactionModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false)
+            setSelectedTransaction(null)
+          }}
+          transaction={selectedTransaction}
+          onSuccess={handleTransactionSuccess}
+        />
+      )}
 
       <BottomNav onAddClick={() => setShowAddModal(true)} />
     </main>

@@ -7,6 +7,8 @@ import Loader from "@/components/loader"
 import { useTheme, themeColors } from "@/contexts/theme-context"
 import { useAuth } from "@/contexts/auth-context"
 import { dashboardAPI, transactionAPI } from "@/lib/api"
+import EditTransactionModal from '@/components/edit-transaction-modal'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const { themeColor } = useTheme()
@@ -34,9 +36,14 @@ export default function Home() {
     }
   }
 
+    const router = useRouter()
+
   const handleTransactionSuccess = () => {
     fetchData()
   }
+
+    const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState<any | null>(null)
 
   const formatCurrency = (amount: number) => `₹${amount.toLocaleString("en-IN")}`
 
@@ -61,7 +68,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-gray-600 text-xs">Hello,</p>
-              <h1 className="text-lg font-semibold text-gray-900">{user?.name || "Aftab"}</h1>
+              <h1 className="text-lg font-semibold text-gray-900">{user?.name || "User"}</h1>
             </div>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
@@ -100,7 +107,7 @@ export default function Home() {
                     <span>1965</span>
                   </div>
                   <p className="text-white text-sm font-medium tracking-wide truncate pr-2">
-                    {user?.name?.toUpperCase() || "AFTAB"}
+                    {user?.name?.toUpperCase()}
                   </p>
                 </div>
                 <div className="flex -space-x-2 flex-shrink-0 min-h-1/2">
@@ -148,7 +155,10 @@ export default function Home() {
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-gray-900 font-semibold text-xs">Recent Transactions</h3>
-              <button className="text-xs text-gray-500 font-medium">View All</button>
+                <button 
+                onClick={() => router.push('/transactions')} 
+                className="text-xs text-gray-500 font-medium hover:text-gray-700 transition-colors"
+              >View All</button>
             </div>
 
             <div className="space-y-3">
@@ -208,6 +218,19 @@ export default function Home() {
             onClose={() => setShowAddModal(false)}
             onSuccess={handleTransactionSuccess}
           />
+
+                   {selectedTransaction && (
+            <EditTransactionModal
+              isOpen={showEditModal}
+              onClose={() => {
+                setShowEditModal(false)
+                setSelectedTransaction(null)
+              }}
+              transaction={selectedTransaction}
+              onSuccess={handleTransactionSuccess}
+            />
+          )}
+
         </div>
       </div>
 
